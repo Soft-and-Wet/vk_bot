@@ -7,5 +7,7 @@ class BotConditions:
     def conditions(self, bot_functions):
         if self.event.obj.message['text'] == "/help":
             bot_functions.response_help()
+        elif self.event.obj.message['text'] == "/reminder":
+            bot_functions.reminder_create_on()
         else:
             bot_functions.not_understand()

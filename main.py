@@ -2,6 +2,7 @@ import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from bot_functions import BotFunctions
 from bot_conditions import BotConditions
+import data
 
 import random
 
@@ -29,7 +30,12 @@ def main():
             bot_functions = BotFunctions(vk, event.obj.message['from_id'], event)
             bot_conditions = BotConditions(vk, event.obj.message['from_id'], event)
 
-            bot_conditions.conditions(bot_functions)
+            data.new_user(event.obj.message['from_id'])
+
+            if not bot_functions.reminder_creation:
+                bot_conditions.conditions(bot_functions)
+            else:
+                bot_functions.reminder_create_process()
 
 
 if __name__ == '__main__':
