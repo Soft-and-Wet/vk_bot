@@ -7,7 +7,11 @@ class BotConditions:
     def conditions(self, bot_functions):
         if self.event.obj.message['text'] == "/help":
             bot_functions.response_help()
-        elif self.event.obj.message['text'] == "/reminder":
+        elif self.event.obj.message['text'] == "/reminder/create":
             bot_functions.reminder_create_on()
+        elif self.event.obj.message['text'] == "/reminder/print":
+            bot_functions.reminder_print()
+        elif self.event.obj.message['text'] == "/reminder/delete":
+            bot_functions.reminder_delete()
         else:
             bot_functions.not_understand()

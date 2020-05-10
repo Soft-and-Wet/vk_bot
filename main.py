@@ -35,7 +35,7 @@ def main():
             if not data.reminder_creation(event.obj.message['from_id']):
                 bot_conditions.conditions(bot_functions)
             else:
-                bot_functions.reminder_create_process()
+                bot_functions.reminder_create_datetime()
 
 
 if __name__ == '__main__':
