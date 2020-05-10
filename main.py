@@ -4,8 +4,6 @@ from bot_functions import BotFunctions
 from bot_conditions import BotConditions
 import data
 
-import random
-
 
 def main():
     vk_session = vk_api.VkApi(
@@ -32,7 +30,9 @@ def main():
 
             data.new_user(event.obj.message['from_id'])
 
-            if not bot_functions.reminder_creation:
+            print(bot_functions.reminder_creation)
+
+            if not data.reminder_creation(event.obj.message['from_id']):
                 bot_conditions.conditions(bot_functions)
             else:
                 bot_functions.reminder_create_process()

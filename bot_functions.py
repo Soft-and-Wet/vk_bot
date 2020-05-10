@@ -1,8 +1,6 @@
 import random
 import data
 
-reminder_creation = False
-
 
 class BotFunctions:
     def __init__(self, vk, user_id, event):
@@ -33,11 +31,10 @@ class BotFunctions:
         self.vk.messages.send(user_id=self.event.obj.message['from_id'],
                               message="введите дату и время напоминания в формате\n'yyyy-mm-dd hh:mm'",
                               random_id=random.randint(0, 2 ** 64))
-        self.reminder_creation = True
+        data.reminder_creation_change(self.user_id)
         # self.reminder_create_process()
 
     def reminder_create_process(self):
-        print(1)
         dnt = self.event.obj.message['text']
         if len(dnt) == 16:
             if dnt[:3].isdigit() and dnt[5:6].isdigit() and dnt[8:9].isdigit() \
@@ -56,4 +53,4 @@ class BotFunctions:
         self.vk.messages.send(user_id=self.event.obj.message['from_id'],
                               message="Настройка напоминания завершена",
                               random_id=random.randint(0, 2 ** 64))
-        self.reminder_creation = False
+        data.reminder_creation_change(self.user_id)
