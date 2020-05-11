@@ -1,5 +1,6 @@
 import random
 import data
+import datetime
 
 
 class BotFunctions:
@@ -23,12 +24,19 @@ class BotFunctions:
                               random_id=random.randint(0, 2 ** 64))
 
     def response_help(self):
-        self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+        self.vk.messages.send(user_id=self.user_id,
                               message="Вот список команд:\n" +
                                       "/reminder/create\n" +
                                       "/reminder/print\n"
                                       "/reminder/delete\n",
                               random_id=random.randint(0, 2 ** 64))
+
+    def reminder_reminds(self):
+        print(1)
+        dnt, text = data.reminder_print(self.user_id)
+        if str(datetime.datetime.today())[:16] == dnt:
+            self.reminder_print()
+            self.reminder_delete()
 
     def reminder_create_on(self):
         self.vk.messages.send(user_id=self.event.obj.message['from_id'],
@@ -55,6 +63,7 @@ class BotFunctions:
                                   message="Неверный формат!",
                                   random_id=random.randint(0, 2 ** 64))
         self.reminder_create_off()
+        self.reminder_reminds()
 
     def reminder_create_off(self):
         self.vk.messages.send(user_id=self.event.obj.message['from_id'],
@@ -65,7 +74,7 @@ class BotFunctions:
     def reminder_print(self):
         if data.reminder_exist(self.user_id):
             dnt, text = data.reminder_print(self.user_id)
-            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+            self.vk.messages.send(user_id=self.user_id,
                                   message="Созданное Вами напоминание:\n" +
                                           dnt + "\n" + text,
                                   random_id=random.randint(0, 2 ** 64))
@@ -77,7 +86,7 @@ class BotFunctions:
     def reminder_delete(self):
         if data.reminder_exist(self.user_id):
             data.reminder_delete(self.user_id)
-            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+            self.vk.messages.send(user_id=self.user_id,
                                   message="Напоминание удалено",
                                   random_id=random.randint(0, 2 ** 64))
         else:
