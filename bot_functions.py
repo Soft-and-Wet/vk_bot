@@ -41,11 +41,17 @@ class BotFunctions:
             self.reminder_delete()
 
     def reminder_create_on(self):
-        self.vk.messages.send(user_id=self.event.obj.message['from_id'],
-                              message="Введите дату, время напоминания в формате\n'yyyy-mm-dd hh:mm'\n" +
-                                      "В этом же сообщении на следующей строке введите текст напоминания",
-                              random_id=random.randint(0, 2 ** 64))
-        data.reminder_creation_change(self.user_id)
+        if not data.reminder_exist(self.user_id):
+            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                  message="Введите дату, время напоминания в формате\n'yyyy-mm-dd hh:mm'\n" +
+                                          "В этом же сообщении на следующей строке введите текст напоминания",
+                                  random_id=random.randint(0, 2 ** 64))
+            data.reminder_creation_change(self.user_id)
+        else:
+            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                  message="Напоминание уже существует",
+                                  random_id=random.randint(0, 2 ** 64))
+            self.reminder_print()
         # self.reminder_create_process()
 
     def reminder_create_datetime(self):
@@ -60,6 +66,14 @@ class BotFunctions:
                     self.vk.messages.send(user_id=self.event.obj.message['from_id'],
                                           message="Напоминание создано",
                                           random_id=random.randint(0, 2 ** 64))
+                else:
+                    self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                          message="Неверный формат!",
+                                          random_id=random.randint(0, 2 ** 64))
+            else:
+                self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                      message="Неверный формат!",
+                                      random_id=random.randint(0, 2 ** 64))
         else:
             self.vk.messages.send(user_id=self.event.obj.message['from_id'],
                                   message="Неверный формат!",
@@ -78,7 +92,7 @@ class BotFunctions:
             dnt, text = data.reminder_print(self.user_id)
             self.vk.messages.send(user_id=self.user_id,
                                   message="Созданное Вами напоминание:\n" +
-                                          dnt + "\n" + text,
+                                          str(dnt) + "\n" + str(text),
                                   random_id=random.randint(0, 2 ** 64))
         else:
             self.vk.messages.send(user_id=self.event.obj.message['from_id'],
@@ -97,6 +111,7 @@ class BotFunctions:
                                   random_id=random.randint(0, 2 ** 64))
 
     def cities_start(self):
+        data.cities_play_end(self.user_id)
         self.vk.messages.send(user_id=self.user_id,
                               message="Давайте сыграем в города (Россия)!\n" +
                                       "Введите город в формате \n" +
@@ -109,7 +124,7 @@ class BotFunctions:
         if self.event.obj.message['text'] == "/cities/end":
             self.cities_end()
         else:
-            if not self.event.obj.message['text'].isalpha() or not self.event.obj.message['text'][0].isupper():
+            if not self.event.obj.message['text'][0].isupper():
                 self.vk.messages.send(user_id=self.event.obj.message['from_id'],
                                       message="Неверный формат!",
                                       random_id=random.randint(0, 2 ** 64))

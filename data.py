@@ -52,7 +52,7 @@ def new_user(user_id, event):
         cur.execute(f"INSERT INTO Table1(id) VALUES({user_id})")
         cur.execute("""INSERT INTO Table1(reminder_creation) VALUES(0)""")
         cur.execute("""INSERT INTO Table1(cities_play) VALUES(0)""")
-        cur.execute("""INSERT INTO Table1(cities) VALUES()""")
+        cur.execute("""INSERT INTO Table1(cities) VALUES(?)""", ("",))
         # cur.execute("""INSERT INTO Table1(reminder_datetime) VALUES("")""")
         # cur.execute(f"INSERT INTO Table1(event) VALUES({event})")
         con.commit()
@@ -113,7 +113,8 @@ def reminder_print(user_id):
 def reminder_exist(user_id):
     # print(cur.execute("""SELECT reminder_datetime FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0])
     if user_id is not None:
-        if cur.execute("""SELECT reminder_datetime FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] is not None:
+        if cur.execute("""SELECT reminder_datetime FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] \
+                is not None:
             return True
         else:
             return False
@@ -135,7 +136,7 @@ def cities_play(user_id):
 
 
 def cities_play_end(user_id):
-    cur.execute("""UPDATE Table1 SET cities = "" WHERE id = ?""", (user_id,))
+    cur.execute("""UPDATE Table1 SET cities = ? WHERE id = ?""", ("", user_id,))
     con.commit()
 
 
@@ -150,24 +151,52 @@ def cities_play_add(user_id, city):
 
 def cities_play_isrepeat(user_id, city):
     print(cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0])
+    print(cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0][-1:])
     print(city)
+
     if cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] == "":
         cities_play_add(user_id, city)
         return True
-    elif city[0].lower() == cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0][-1]:
-        if city not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
-            cities_play_add(user_id, city)
-            return True
+    elif city not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
+        if cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0][-1:] == "ь":
+            if city[0].lower() == cur.execute("""SELECT cities FROM Table1 WHERE id = ?""",
+                                              (user_id,)).fetchall()[0][0][-2:]:
+                cities_play_add(user_id, city)
+                return True
+            else:
+                return False
         else:
-            return False
-    else:
-        return False
+            if cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0][-1:] == "й":
+                if city[0].lower() == "и":
+                    cities_play_add(user_id, city)
+                    return True
+                else:
+                    return False
+            else:
+                if city[0].lower() == cur.execute("""SELECT cities FROM Table1 WHERE id = ?""",
+                                                  (user_id,)).fetchall()[0][0][-1:]:
+                    cities_play_add(user_id, city)
+                    return True
+                else:
+                    return False
 
 
 def cities_play_new(user_id, city):
     while True:
         new_city = choice(cities)
-        if new_city[0].lower() == city[-1] \
-                and new_city not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall():
-            cities_play_add(user_id, new_city)
-            return new_city
+        if city[-1] == "ь":
+            if new_city[0].lower() == city[-2] and new_city \
+                        not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
+                cities_play_add(user_id, new_city)
+                return new_city
+        else:
+            if city[-1] == "й":
+                if new_city[0] == "И" and new_city \
+                        not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
+                    cities_play_add(user_id, new_city)
+                    return new_city
+            else:
+                if new_city[0].lower() == city[-1] and new_city \
+                        not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
+                    cities_play_add(user_id, new_city)
+                    return new_city
