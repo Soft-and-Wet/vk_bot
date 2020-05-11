@@ -46,7 +46,7 @@ cities = ['Абакан', 'Азов', 'Александров', 'Алексин'
           'Ярославль']
 
 
-def new_user(user_id, event):
+def new_user(user_id):
     if not cur.execute("""SELECT id FROM Table1 WHERE id = ?""", (user_id,)).fetchall():
         print("---------------------------------")
         cur.execute(f"INSERT INTO Table1(id) VALUES({user_id})")
@@ -66,18 +66,11 @@ def reminder_creation(user_id):
 
 
 def get_id():
-    return cur.execute("""SELECT id FROM Table1""").fetchall()[1:]
-
-
-def reminder_reminds(vk_session):
-    print(0)
-    for user_id in cur.execute("""SELECT id FROM Table1""").fetchall():
-        print(user_id[0])
-    # vk = vk_session.get_api()
-    # bot_functions = BotFunctions(vk, event.obj.message['from_id'], event)
-    # if reminder_exist(event.obj.message['from_id']):
-    # bot_functions.reminder_reminds()
-    # if reminder_exist(user_id[0]):
+    a = []
+    for i in cur.execute("""SELECT id FROM Table1""").fetchall():
+        if i[0] is not None:
+            a.append(i[0])
+    return a
 
 
 def reminder_creation_change(user_id):
@@ -186,12 +179,12 @@ def cities_play_new(user_id, city):
         new_city = choice(cities)
         if city[-1] == "ь":
             if new_city[0].lower() == city[-2] and new_city \
-                        not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
+                    not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
                 cities_play_add(user_id, new_city)
                 return new_city
         else:
             if city[-1] == "й":
-                if new_city[0] == "И" and new_city \
+                if new_city[0] == ("И" or "Й") and new_city \
                         not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
                     cities_play_add(user_id, new_city)
                     return new_city
