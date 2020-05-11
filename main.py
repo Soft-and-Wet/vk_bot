@@ -45,10 +45,12 @@ def main():
                 if data.reminder_exist(event.obj.message['from_id']):
                     bot_functions.reminder_reminds()
 
-                if not data.reminder_creation(event.obj.message['from_id']):
-                    bot_conditions.conditions(bot_functions)
-                else:
+                if data.cities_play(event.obj.message['from_id']):
+                    bot_functions.cities_play()
+                elif data.reminder_creation(event.obj.message['from_id']):
                     bot_functions.reminder_create_datetime()
+                else:
+                    bot_conditions.conditions(bot_functions)
 
 
 if __name__ == '__main__':

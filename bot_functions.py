@@ -26,9 +26,11 @@ class BotFunctions:
     def response_help(self):
         self.vk.messages.send(user_id=self.user_id,
                               message="Вот список команд:\n" +
-                                      "/reminder/create\n" +
-                                      "/reminder/print\n"
-                                      "/reminder/delete\n",
+                                      "/reminder/create - создание напоминания\n" +
+                                      "/reminder/print - вывод напоминания\n" +
+                                      "/reminder/delete - удаление напоминания\n" +
+                                      "/cities/start - игра 'города' начало" +
+                                      "/cities/end - игра 'города' конец",
                               random_id=random.randint(0, 2 ** 64))
 
     def reminder_reminds(self):
@@ -93,3 +95,34 @@ class BotFunctions:
             self.vk.messages.send(user_id=self.event.obj.message['from_id'],
                                   message="Напоминание не создано",
                                   random_id=random.randint(0, 2 ** 64))
+
+    def cities_start(self):
+        self.vk.messages.send(user_id=self.user_id,
+                              message="Давайте сыграем в города (Россия)!\n" +
+                              "Введите город в формате \n" +
+                              "'Город' (без кавычек)",
+                              random_id=random.randint(0, 2 ** 64))
+
+        data.cities_play_change(self.user_id)
+
+    def cities_play(self):
+        if not self.event.obj.message['text'].isalpha() or not self.event.obj.message['text'].isupper():
+            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                  message="Неверный формат!",
+                                  random_id=random.randint(0, 2 ** 64))
+            self.cities_end()
+        elif self.event.obj.message['text'] not in data.cities:
+            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                  message="Такого города в России нет!",
+                                  random_id=random.randint(0, 2 ** 64))
+            self.cities_end()
+        else:
+
+
+
+    def cities_end(self):
+        self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                              message="Игра в города завершена",
+                              random_id=random.randint(0, 2 ** 64))
+
+        data.cities_play_change(self.user_id)
