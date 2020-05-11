@@ -42,8 +42,8 @@ def main():
 
                 # print(bot_functions.reminder_creation)
 
-                if data.reminder_exist(event.obj.message['from_id']):
-                    bot_functions.reminder_reminds()
+                # if data.reminder_exist(event.obj.message['from_id']):
+                    # bot_functions.reminder_reminds()
 
                 if data.cities_play(event.obj.message['from_id']):
                     bot_functions.cities_play()

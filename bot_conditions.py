@@ -14,8 +14,8 @@ class BotConditions:
         elif self.event.obj.message['text'] == "/reminder/delete":
             bot_functions.reminder_delete()
         elif self.event.obj.message['text'] == "/cities/start":
-            pass
+            bot_functions.cities_start()
         elif self.event.obj.message['text'] == "/cities/end":
-            pass
+            bot_functions.cities_end()
         else:
             bot_functions.not_understand()

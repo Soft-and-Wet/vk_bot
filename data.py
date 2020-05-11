@@ -1,4 +1,5 @@
 import sqlite3
+from random import choice
 
 con = sqlite3.connect("data.db")
 cur = con.cursor()
@@ -46,10 +47,14 @@ cities = ['Абакан', 'Азов', 'Александров', 'Алексин'
 
 
 def new_user(user_id, event):
-    if cur.execute("""SELECT id FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] != user_id:
+    if not cur.execute("""SELECT id FROM Table1 WHERE id = ?""", (user_id,)).fetchall():
+        print("---------------------------------")
         cur.execute(f"INSERT INTO Table1(id) VALUES({user_id})")
         cur.execute("""INSERT INTO Table1(reminder_creation) VALUES(0)""")
-        cur.execute(f"INSERT INTO Table1(event) VALUES({event})")
+        cur.execute("""INSERT INTO Table1(cities_play) VALUES(0)""")
+        cur.execute("""INSERT INTO Table1(cities) VALUES()""")
+        # cur.execute("""INSERT INTO Table1(reminder_datetime) VALUES("")""")
+        # cur.execute(f"INSERT INTO Table1(event) VALUES({event})")
         con.commit()
 
 
@@ -106,10 +111,12 @@ def reminder_print(user_id):
 
 
 def reminder_exist(user_id):
-    if cur.execute("""SELECT reminder_datetime FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] is not None:
-        return True
-    else:
-        return False
+    # print(cur.execute("""SELECT reminder_datetime FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0])
+    if user_id is not None:
+        if cur.execute("""SELECT reminder_datetime FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] is not None:
+            return True
+        else:
+            return False
 
 
 def cities_play_change(user_id):
@@ -127,5 +134,40 @@ def cities_play(user_id):
         return False
 
 
+def cities_play_end(user_id):
+    cur.execute("""UPDATE Table1 SET cities = "" WHERE id = ?""", (user_id,))
+    con.commit()
+
+
+# cities_play_end(415484733)
+
+
+def cities_play_add(user_id, city):
+    cur.execute("""UPDATE Table1 SET cities = ? WHERE id = ?""", (
+        cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] + city, user_id,))
+    con.commit()
+
+
 def cities_play_isrepeat(user_id, city):
-    print(cur.execute("""SELECT cities_play FROM Table1 WHERE id = ?""", (user_id,)).fetchall())
+    print(cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0])
+    print(city)
+    if cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] == "":
+        cities_play_add(user_id, city)
+        return True
+    elif city[0].lower() == cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0][-1]:
+        if city not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]:
+            cities_play_add(user_id, city)
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def cities_play_new(user_id, city):
+    while True:
+        new_city = choice(cities)
+        if new_city[0].lower() == city[-1] \
+                and new_city not in cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall():
+            cities_play_add(user_id, new_city)
+            return new_city
