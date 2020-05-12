@@ -9,7 +9,7 @@ import wikipedia
 
 def main_keyboard():
     keyboard = VkKeyboard(one_time=False)
-    keyboard.add_button("Создать напоминание", color=VkKeyboardColor.POSITIVE)
+    keyboard.add_button("Новое напоминание", color=VkKeyboardColor.POSITIVE)
     keyboard.add_button("Удалить напоминание", color=VkKeyboardColor.NEGATIVE)
     keyboard.add_line()
     keyboard.add_button("Показать напоминание", color=VkKeyboardColor.DEFAULT)

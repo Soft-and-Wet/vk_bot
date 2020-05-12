@@ -59,7 +59,9 @@ class BotFunctions:
 
     def reminder_create_datetime(self, main_keyboard):
         if "\n" in self.event.obj.message['text']:
-            dnt, text = self.event.obj.message['text'].split("\n")
+            dnttext = self.event.obj.message['text'].split("\n")
+            dnt = dnttext[0]
+            text = dnttext[1]
             if len(dnt) == 16:
                 if dnt[:3].isdigit() and dnt[5:6].isdigit() and dnt[8:9].isdigit() \
                         and dnt[11:12].isdigit() and dnt[14:15].isdigit():
@@ -173,6 +175,13 @@ class BotFunctions:
         data.cities_play_change(self.user_id)
 
     def wiki(self, user_id):
-        self.vk.messages.send(user_id=self.event.obj.message['from_id'],
-                              message=wikipedia.summary(data.wiki(user_id)),
-                              random_id=random.randint(0, 2 ** 64))
+        city = data.wiki(user_id)
+        print(city)
+        if city is not None:
+            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                  message=wikipedia.summary(data.wiki(user_id)),
+                                  random_id=random.randint(0, 2 ** 64))
+        else:
+            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                  message="Вы еще не играли в города",
+                                  random_id=random.randint(0, 2 ** 64))
