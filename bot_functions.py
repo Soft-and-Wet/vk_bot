@@ -1,6 +1,7 @@
 import random
 import data
 import datetime
+import wikipedia
 
 
 class BotFunctions:
@@ -133,12 +134,14 @@ class BotFunctions:
         data.cities_play_change(self.user_id)
 
     def cities_play(self, main_keyboard):
-        if self.event.obj.message['text'] == "Завершить игру в города":
+        if self.event.obj.message['text'] == "Завершить":
             self.cities_end(main_keyboard)
         elif self.event.obj.message['text'] == "Помощь":
             self.vk.messages.send(user_id=self.event.obj.message['from_id'],
                                   message=data.cities_play_help(self.user_id),
                                   random_id=random.randint(0, 2 ** 64))
+        elif self.event.obj.message['text'] == "Wikipedia":
+            self.wiki(self.user_id)
         else:
             if not self.event.obj.message['text'][0].isupper():
                 self.vk.messages.send(user_id=self.event.obj.message['from_id'],
@@ -168,3 +171,8 @@ class BotFunctions:
                               keyboard=main_keyboard)
         data.cities_play_end(self.user_id)
         data.cities_play_change(self.user_id)
+
+    def wiki(self, user_id):
+        self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                              message=wikipedia.summary(data.wiki(user_id)),
+                              random_id=random.randint(0, 2 ** 64))

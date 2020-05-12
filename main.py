@@ -4,6 +4,7 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from bot_functions import BotFunctions
 from bot_conditions import BotConditions
 import data
+import wikipedia
 
 
 def main_keyboard():
@@ -25,7 +26,8 @@ def reminder_create_keyboard():
 def cities_start_keyboard():
     keyboard = VkKeyboard(one_time=False)
     keyboard.add_button("Помощь", color=VkKeyboardColor.DEFAULT)
-    keyboard.add_button("Завершить игру в города", color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button("Завершить", color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button("Wikipedia", color=VkKeyboardColor.DEFAULT)
     return keyboard.get_keyboard()
 
 
@@ -33,6 +35,7 @@ def main():
     vk_session = vk_api.VkApi(
         token="b368acff9828b8e7933ad148a2973c1ab439fa2b78ad465c0da24f07ec24a4bc105c9f59108874f24e918")
     longpoll = VkBotLongPoll(vk_session, group_id=195170405, wait=10)
+    wikipedia.set_lang("ru")
     while True:
         for i in data.get_id():
             print(i)
@@ -60,7 +63,7 @@ def main():
                 data.new_user(event.obj.message['from_id'])
 
                 if data.cities_play(event.obj.message['from_id']):
-                    if event.obj.message['from_id'] == "Завершить игру в города":
+                    if event.obj.message['from_id'] == "Завершить":
                         bot_conditions.conditions(bot_functions, main_keyboard(), reminder_create_keyboard(),
                                                   cities_start_keyboard())
                     else:

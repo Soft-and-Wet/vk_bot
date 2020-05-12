@@ -53,6 +53,7 @@ def new_user(user_id):
         cur.execute("""INSERT INTO Table1(reminder_creation) VALUES(0)""")
         cur.execute("""INSERT INTO Table1(cities_play) VALUES(0)""")
         cur.execute("""INSERT INTO Table1(cities) VALUES(?)""", ("",))
+        cur.execute("""INSERT INTO Table1(city) VALUES(?)""", ("",))
         # cur.execute("""INSERT INTO Table1(reminder_datetime) VALUES("")""")
         # cur.execute(f"INSERT INTO Table1(event) VALUES({event})")
         con.commit()
@@ -139,7 +140,12 @@ def cities_play_end(user_id):
 def cities_play_add(user_id, city):
     cur.execute("""UPDATE Table1 SET cities = ? WHERE id = ?""", (
         cur.execute("""SELECT cities FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0] + city, user_id,))
+    cur.execute("""UPDATE Table1 SET city = ? WHERE id = ?""", (city, user_id,))
     con.commit()
+
+
+def wiki(user_id):
+    return cur.execute("""SELECT city FROM Table1 WHERE id = ?""", (user_id,)).fetchall()[0][0]
 
 
 def cities_play_isrepeat(user_id, city):
