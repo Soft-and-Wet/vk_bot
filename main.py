@@ -24,6 +24,7 @@ def reminder_create_keyboard():
 
 def cities_start_keyboard():
     keyboard = VkKeyboard(one_time=False)
+    keyboard.add_button("Помощь", color=VkKeyboardColor.DEFAULT)
     keyboard.add_button("Завершить игру в города", color=VkKeyboardColor.NEGATIVE)
     return keyboard.get_keyboard()
 

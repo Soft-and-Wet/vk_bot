@@ -135,6 +135,10 @@ class BotFunctions:
     def cities_play(self, main_keyboard):
         if self.event.obj.message['text'] == "Завершить игру в города":
             self.cities_end(main_keyboard)
+        elif self.event.obj.message['text'] == "Помощь":
+            self.vk.messages.send(user_id=self.event.obj.message['from_id'],
+                                  message=data.cities_play_help(self.user_id),
+                                  random_id=random.randint(0, 2 ** 64))
         else:
             if not self.event.obj.message['text'][0].isupper():
                 self.vk.messages.send(user_id=self.event.obj.message['from_id'],
